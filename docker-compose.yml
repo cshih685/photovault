@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    environment:
+      - DATABASE_URL=postgresql://photovault:photovault@postgres:5432/photovault
+      - NODE_ENV=production
+
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=photovault
+      - POSTGRES_PASSWORD=photovault
+      - POSTGRES_DB=photovault
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./lib/db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+
+volumes:
+  postgres_data:
